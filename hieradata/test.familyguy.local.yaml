@@ -1,0 +1,3 @@
+---
+rabbitmq::package_provider: 'yum'
+rabbitmq::repos_ensure: false

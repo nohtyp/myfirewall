@@ -1,0 +1,53 @@
+---
+###########################
+## This for ssh configs. ##
+###########################
+ssh::storeconfigs_enabled: false
+
+ssh::server_options:
+        Protocol: '2'
+        Port: '22'
+        AcceptEnv: 'LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES'
+        AcceptEnv: 'LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT'
+        AcceptEnv: 'LC_IDENTIFICATION LC_ALL LANGUAGE'
+        AcceptEnv: 'XMODIFIERS'
+        GSSAPIAuthentication: 'yes'
+        GSSAPICleanupCredentials: 'yes'
+        GSSAPIKeyExchange: 'yes'
+        ChallengeResponseAuthentication: 'no'
+        PasswordAuthentication: 'yes'
+        #AllowGroups: 'vagrant admin'
+        LogLevel: 'INFO'
+        MaxAuthTries: '3'
+        IgnoreRhosts: 'yes'
+        HostbasedAuthentication: 'no'
+        PermitRootLogin: 'no'
+        PermitEmptyPasswords: 'no'
+        PermitUserEnvironment: 'no'
+        Ciphers: 'aes128-ctr,aes192-ctr,aes256-ctr'
+        ClientAliveInterval: '1800'
+        ClientAliveCountMax: '0'
+        Banner: '/etc/issue'
+        PrintMotd: 'no'
+        MACS: 'hmac-sha1,hmac-sha2-256,hmac-sha2-512'
+        UsePAM: 'yes'
+        X11Forwarding: 'yes'
+        SyslogFacility: 'AUTHPRIV'
+        AuthorizedKeysFile:      '.ssh/authorized_keys'
+        KerberosOrLocalPasswd: 'yes'
+
+ssh::client_options:
+        'Host *':
+          HashKnownHosts: 'yes'
+          SendEnv: 'LANG LC_*'
+
+resolv_conf::nameservers:
+        - '10.40.57.39'
+
+resolv_conf::searchpath:
+        - 'hq.nesdis.noaa.doc'
+
+sudo::configs:
+        'admins':
+                'content'  : "%vtl_users ALL=(ALL) NOPASSWD: ALL"
+                'priority' : 10

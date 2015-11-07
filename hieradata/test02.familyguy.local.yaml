@@ -1,0 +1,9 @@
+---
+rabbitmq::package_provider: 'yum'
+
+rabbitmq::myvhost: '/sensu'
+rabbitmq::vhostuser: 'sensu'
+
+#myfirewall::myrichrule1: 
+#    - rule family="ipv4" source address="192.168.10.0/24" port port="3001" protocol="tcp" accept
+#    - rule family="ipv4" source address="192.168.10.0/24" port port="3051" protocol="tcp" accept
