@@ -25,7 +25,7 @@ This module provides a provider and type for the firewalld service.  Currently,
 firewalld is the only firewall supported, however, I am in the process of creating
 an iptables provider.
 
-This module manages the firewwalld service and configures the rules for the
+This module manages the firewalld service and configures the rules for the
 firewall.
 
 ## Setup
