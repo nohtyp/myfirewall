@@ -2,11 +2,16 @@
   "name": "nohtyp-myfirewall",
   "version": "1.0.0",
   "author": "nohtyp",
-  "summary": null,
+  "summary": "This is a puppet firewall module.",
   "license": "Apache 2.0",
-  "source": "",
-  "project_page": null,
-  "issues_url": null,
+  "source": "https://github.com/nohtyp/myfirewall.git",
+  "project_page": "https://github.com/nohtyp/myfirewall",
+  "issues_url": "https://github.com/nohtyp/myfirewall/issues",
+  "operatingsystem_support": [
+    {
+    "operatingsystem":"RedHat",
+    "operatingsystemrelease":[ "7" ]
+    },
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
@@ -14,4 +19,3 @@
     }
   ]
 }
-
