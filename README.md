@@ -132,15 +132,15 @@ Currently this module is compatible with RedHat 7 family.  I am working on
 other OSes and will update this accordingly.  The module currently
 supports the following options:
 
-*name
-*zone
-*protocol
-*tcp_udp
-*port (allows string or array)
-*service (allows string or array)
-*source
-*richrule (allows string or array)
-*permanent (true|false)
+- `name`
+- `zone`
+- `protocol`
+- `tcp_udp`
+- `port` (allows string or array)
+- `service` (allows string or array)
+- `source`
+- `richrule` (allows string or array)
+- `permanent` (true|false)
 
 Currently this module is working for RedHat 7 family.
 
