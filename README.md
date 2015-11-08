@@ -84,14 +84,12 @@ myfirewall { 'Second richrule':
 
 <pre>
 myfirewall { 'Firewall Rule':
-    ensure     => absent,
+    ensure     => present,
     zone       => 'public',
     richrule   => 'rule family="ipv4" source address="192.168.10.0/24" port port="3001" protocol="tcp" accept',
     permanent  => true,
    }
 </pre>
-
-
 
 ###Advanced example with heira:
 This example will create multiple rules in the firewall
@@ -107,6 +105,19 @@ Adding multiple ports with a single protocol
     notify     =>  Exec['Reloading firewall rules'],
    }
 </pre>
+
+###Use tcp_udp to add tcp and udp protocol for all ports:
+
+<pre>
+myfirewall { 'Second richrule':
+    ensure     => absent,
+    zone       => 'public',
+    port       => $myports,
+    tcp_udp    => true,
+    notify     =>  Exec['Reloading firewall rules'],
+   }
+</pre>
+
 
 ##myfirewall/hieradata/test02.familyguy.local.yaml
 <pre>
@@ -133,12 +144,12 @@ other OSes and will update this accordingly.  The module currently
 supports the following options:
 
 - `name`
-- `zone`
-- `protocol`
-- `tcp_udp`
+- `zone` 
+- `protocol` (tcp|udp)
+- `tcp_udp` (true|false)
 - `port` (allows string or array)
 - `service` (allows string or array)
-- `source`
+- `source` (192.168.1.0/24)
 - `richrule` (allows string or array)
 - `permanent` (true|false)
 
@@ -149,6 +160,6 @@ Currently this module is working for RedHat 7 family.
 Since your module is awesome, other users will want to play with it. Let them
 know what the ground rules for contributing are.
 
-## Release Notes/Contributors/Etc **Optional**
+## Release Notes/Contributors/Etc
 This is the first release of this module.  I will be updating
 the notes when applicable.
