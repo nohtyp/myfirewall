@@ -46,7 +46,7 @@ loads them.
 ###Create firewall rule for https service in public zone:
 
 <pre>
- firewall { 'Firewall Test':
+myfirewall { 'Firewall Test':
     ensure          => present,
     name            => 'public',
     zone            => 'public',
@@ -58,7 +58,7 @@ loads them.
 ###Adding a permanent port/protocol firewall rule in public zone:
 
 <pre>
-firewall { 'Firewall Rule':
+myfirewall { 'Firewall Rule':
     ensure     => present,
     name       => 'public',
     zone       => 'public',
@@ -71,7 +71,7 @@ firewall { 'Firewall Rule':
 ###Remove a service
 
 <pre>
- myfirewall { 'Second richrule':
+myfirewall { 'Second richrule':
     ensure     => absent,
     zone       => 'public',
     protocol   => 'tcp',
