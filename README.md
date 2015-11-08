@@ -115,6 +115,7 @@ supports the following options:
 *richrule (allows string or array)
 *permanent (true|false)
 
+Currently this module is working for RedHat 7 family.
 
 ## Development
 
