@@ -91,13 +91,40 @@ myfirewall { 'Firewall Rule':
    }
 </pre>
 
+
+
+###Advanced example with heira:
+This example will create multiple rules in the firewall
+that will use only tcp.
+
+Adding multiple ports with a single protocol
+<pre>
+ myfirewall { 'Second':
+    ensure     => present,
+    zone       => 'public',
+    port       => $myports,
+    protocol   => 'tcp',
+    notify     =>  Exec['Reloading firewall rules'],
+   }
+</pre>
+
+##myfirewall/hieradata/test02.familyguy.local.yaml
+<pre>
+myfirewall::myports:
+    - 53
+    - 22
+    - 21
+    - 110
+</pre>
+
+
 ## Reference
 
 The following providers and types are created within this module:
 
 ###Types and Providers
-*`myfirewall`
-*`firewalld`
+- `myfirewall`
+- `firewalld`
 
 ## Limitations
 

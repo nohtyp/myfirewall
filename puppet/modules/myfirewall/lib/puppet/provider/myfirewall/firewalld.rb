@@ -2,9 +2,93 @@
 
 Puppet::Type.type(:myfirewall).provide(:firewalld) do
   @doc = <<-EOS
-    This provider manages the firewalld firewall configs on the server. 
-    If a machines firewall is already configured it does nothing unless the
-    force parameter is set to true.
+            This Firewall module will modify the firewalld firewall.
+            The following are examples of how to use provider and type
+            Examples:
+
+           Firewall service:
+           myfirewall { 'Firewall Test':
+             ensure          => present,
+             name            => 'public',
+             zone            => 'public',
+             service         => 'https',
+             permanent       => true,
+           }
+
+           Adding a permanent firewall rule service:
+           myfirewall { 'Firewall Rule':
+             ensure     => present,
+             name       => 'public',
+             zone       => 'public',
+             port       => '3000',
+             protocol   => 'tcp',
+             permanent  => true,
+           }
+
+           Remove a service
+           myfirewall { 'Second richrule':
+             ensure     => absent,
+             zone       => 'public',
+             protocol   => 'tcp',
+             port       => '1534',
+             notify     =>  Exec['Reloading firewall rules'],
+           }
+
+
+           Remove port and protocol:
+           myfirewall { 'Second richrule':
+             ensure     => absent,
+             zone       => 'public',
+             port       => $myport,
+             protocol   => 'tcp',
+             notify     =>  Exec['Reloading firewall rules'],
+           }
+
+           Add firewall richrule:
+           myfirewall { 'Firewall Rule':
+             ensure     => absent,
+             zone       => 'public',
+             richrule   => 'rule family="ipv4" source address="192.168.10.0/24" port port="3001" protocol="tcp" accept',
+             permanent  => true,
+           }
+
+           Adding multiple rich rules with heira:
+           myfirewall { 'Firewall Rule':
+             ensure     => absent,
+             zone       => 'public',
+             richrule   => $richrule1,
+             permanent  => true,
+           }
+
+           /myfirewall/hieradata/test02.familyguy.local.yaml
+           myfirewall::myrichrule1: 
+             - rule family="ipv4" source address="192.168.10.0/24" port port="3001" protocol="tcp" accept
+             - rule family="ipv4" source address="192.168.10.0/24" port port="3051" protocol="tcp" accept
+
+          Adding ports with multiple protocols (currently tcp and udp)
+          myfirewall { 'Second richrule':
+            ensure     => absent,
+            zone       => 'public',
+            port       => $myports,
+            tcp_udp    => true,
+            notify     =>  Exec['Reloading firewall rules'],
+           }
+
+          Adding multiple ports with a single protocol
+          myfirewall { 'Second':
+            ensure     => present,
+            zone       => 'public',
+            port       => $myports,
+            protocol   => 'tcp',
+            notify     =>  Exec['Reloading firewall rules'],
+           }
+
+          /myfirewall/hieradata/test02.familyguy.local.yaml
+          myfirewall::myports:
+            - 53
+            - 22
+            - 21
+            - 110
   EOS
 
   confine :osfamily => :redhat
