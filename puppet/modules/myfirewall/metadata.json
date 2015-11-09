@@ -1,17 +1,24 @@
 {
   "name": "nohtyp-myfirewall",
-  "version": "1.0.0",
+  "version": "1.0.5",
   "author": "nohtyp",
-  "summary": "This module will configure the firewall (firewalld and iptables).",
-  "license": "Apache 2.0",
-  "source": "https://github.com/nohtyp/myfirewall",
+  "summary": "This is a puppet firewall module.",
+  "license": "Apache-2.0",
+  "source": "https://github.com/nohtyp/myfirewall.git",
   "project_page": "https://github.com/nohtyp/myfirewall",
   "issues_url": "https://github.com/nohtyp/myfirewall/issues",
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "RedHat",
+      "operatingsystemrelease": [
+        "7"
+      ]
+    }
+  ],
   "dependencies": [
     {
       "name": "puppetlabs-stdlib",
-      "version_range": ">= 1.0.0"
+      "version_range": ">= 1.0.0 <5.0.0"
     }
   ]
 }
-

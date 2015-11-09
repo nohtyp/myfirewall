@@ -40,14 +40,13 @@ class myfirewall (
 $firewall_service    = $myfirewall::params::firewall_service,
 $firewall_status     = $myfirewall::params::firewall_status,
 $myrichrule          = $myfirewall::params::myrichrule,
-$myrichrule1         = $myfirewall::params::myrichrule1,
 ) inherits myfirewall::params {
 
 anchor {'myfirewall::begin': } ->
- class {'::myfirewall::install':} ->
- class {'::myfirewall::config':} ->
- class {'::myfirewall::service':} ->
- class {'::myfirewall::reload_firewall':} ->
+  class {'::myfirewall::install':} ->
+  class {'::myfirewall::config':} ->
+  class {'::myfirewall::service':} ->
+  class {'::myfirewall::reload_firewall':} ->
 anchor {'myfirewall::end':}
 
 }
