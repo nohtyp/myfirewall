@@ -106,7 +106,12 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
         fail("You have to provide a zone and service")
       elsif @resource[:richrule] && @resource[:richrule].nil?
         fail("You have to provide a zone and richrule")
+      elsif @resource[:block_icmp] && @resource[:block_icmp].nil?
+        fail("You have to provide a zone and icmp message type")
+      elsif @resource[:myzones] && @resource[:protocol] && @resource[:port] && @resource[:richrule]  && @resource[:source]
+        fail("You cannot use other options when defining a new zone.  Try only zone and permanent => true")
       end
+
     elsif @resource[:zone] && "#{@resource[:ensure]}" == 'absent'
       if @resource[:port] && @resource[:port].nil? && @resource[:protocol] && @resource[:protocol].nil?
         fail("You have to provide a zone, port and protocol")
@@ -114,11 +119,34 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
         fail("You have to provide a zone and service")
       elsif @resource[:richrule] && @resource[:richrule].nil?
         fail("You have to provide a zone and richrule")
+      elsif @resource[:block_icmp] && @resource[:block_icmp].nil?
+        fail("You have to provide a zone and icmp message type")
+      elsif @resource[:myzones] && @resource[:zone].nil?
+        fail("You cannot create a zone or list of zones temporarily")
       end
     end
     
     if "#{@resource[:ensure]}" == 'present'
-      params << "--zone=#{@resource[:zone]}" unless @resource[:zone].nil?
+
+      fwlistperm = firewalld('--get-zones', '--permanent')
+      #Using arrays is currently buggy with creating new zones
+      #I will have to revisit at a later date.
+      #if @resource[:zone].is_a?(Array) && @resource[:myzones]
+      #  @resource[:zone].each do |zones|
+      #    params << "--new-zone=#{zones}" unless "#{fwlistperm}".include?"#{zones}"
+      #  end
+      #elsif @resource[:zone] && @resource[:myzones]
+      #  params << "--new-zone=#{@resource[:zone]}" unless "#{fwlistperm}".include?"#{zones}"
+      if @resource[:zone] && @resource[:myzones]
+        params << "--new-zone=#{@resource[:zone]}" unless "#{fwlistperm}".include?"#{@resource[:zone]}"
+      #elsif @resource[:zone].is_a?(Array) && @resource[:myzones].nil?
+      #  @resource[:zone].each do |zones|
+      #    params << "--zone=#{zones}"
+      #  end
+      else 
+        params << "--zone=#{@resource[:zone]}"
+      end
+
       if @resource[:service].is_a?(Array) && @resource[:service]
         @resource[:service].each do |myservice|
           params << "--add-service=#{myservice}" 
@@ -126,7 +154,9 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
       elsif @resource[:service] && !@resource[:service].nil?
           params << "--add-service=#{@resource[:service]}"
       end
+
       params << "--add-source=#{@resource[:source]}" unless @resource[:source].nil?
+     
       if @resource[:richrule].is_a?(Array) && @resource[:richrule]
         @resource[:richrule].each do |rule|
           params << "--add-rich-rule=#{rule}" 
@@ -142,6 +172,14 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
         end
       elsif @resource[:port] && !@resource[:port].nil? && @resource[:tcp_udp].nil?
           params << "--add-port=#{@resource[:port]}/#{@resource[:protocol]}"
+      end
+
+      if @resource[:block_icmp].is_a?(Array) && @resource[:block_icmp] && !@resource[:block_icmp].nil?
+        @resource[:block_icmp].each do |icmptypes|
+          params << "--add-icmp-block=#{icmptypes}" 
+        end
+      elsif @resource[:block_icmp] && !@resource[:block_icmp].nil?
+          params << "--add-icmp-block=#{@resource[:block_icmp]}"
       end
 
       if @resource[:tcp_udp]
@@ -160,7 +198,16 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
       end
 
     else
-      params << "--zone=#{@resource[:zone]}" unless @resource[:zone].nil?
+      #Using arrays is currently buggy with creating new zones
+      #I will have to revisit at a later date.
+      #if @resource[:zone].is_a?(Array)
+      #  @resource[:zone].each do |zones|
+      #    params << "--delete-zone=#{zones}" unless @resource[:zone].nil?
+      #  end
+      #else
+        params << "--delete-zone=#{@resource[:zone]}" unless "#{@resource[:ensure]}" == 'absent'
+      #end
+
       if @resource[:service].is_a?(Array) && @resource[:service]
         @resource[:service].each do |myservice|
           params << "--remove-service=#{myservice}" 
@@ -168,7 +215,9 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
       elsif @resource[:service] && !@resource[:service].nil?
           params << "--remove-service=#{@resource[:service]}"
       end
+
       params << "--remove-source=#{@resource[:source]}" unless @resource[:source].nil?
+
       if @resource[:richrule].is_a?(Array) && @resource[:richrule]
         @resource[:richrule].each do |rule|
           params << "--remove-rich-rule=#{rule}" 
@@ -184,6 +233,14 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
       elsif @resource[:port] && !@resource[:port].nil? && @resource[:tcp_udp].nil?
           Puppet.debug("this is the resource port")
           params << "--remove-port=#{@resource[:port]}/#{@resource[:protocol]}"
+      end
+
+      if @resource[:block_icmp].is_a?(Array) && @resource[:block_icmp]
+        @resource[:block_icmp].each do |icmptypes|
+          params << "--remove-icmp-block=#{icmptypes}" 
+        end
+      elsif @resource[:block_icmp] && !@resource[:block_icmp].nil?
+          params << "--remove-icmp-block=#{@resource[:block_icmp]}"
       end
 
       if @resource[:tcp_udp]
@@ -215,10 +272,16 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
   end
 
   def firewalldestroyperm
-    Puppet.debug("Deleting permanent firewall rule")
-    options = build_parameters
-    firewalld(*options)
-    firewalld(*options, '--permanent')
+    if @resource[:myzones]
+      Puppet.debug("Deleting permanent firewall rule")
+      options = build_parameters
+      firewalld(*options, '--permanent')
+    else
+      Puppet.debug("Deleting permanent firewall rule")
+      options = build_parameters
+      firewalld(*options)
+      firewalld(*options, '--permanent')
+    end
   end
 
 
@@ -229,10 +292,16 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
   end
 
   def firewallcreateperm
-    Puppet.debug("Creating permanent firewall rule")
-    options = build_parameters
-    firewalld(*options)
-    firewalld(*options, '--permanent')
+    if @resource[:myzones]
+      Puppet.debug("Creating permanent firewall rule")
+      options = build_parameters
+      firewalld(*options, '--permanent')
+    else
+      Puppet.debug("Creating permanent firewall rule")
+      options = build_parameters
+      firewalld(*options)
+      firewalld(*options, '--permanent')
+    end
   end
 
   def check
@@ -243,7 +312,7 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
        if @resource[:port].is_a?(Array) && @resource[:port]
         resource[:port].each do |port|
           if "#{fwlistperm}".include?"#{port}"
-            Puppet.debug("port listed in permanent rules for firewall.")
+            Puppet.debug("port is listed in permanent rules for firewall.")
             next
             #return true
           else
@@ -312,8 +381,56 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
        else
          Puppet.debug("service is not listed in permanent rules for firewall.")
          return false
-       end 
-     end
+       end
+
+     elsif @resource[:block_icmp]
+       Puppet.debug("Checking if permanent block for icmptypes is active in firewall")
+       fwlistperm = firewalld('--list-icmp-blocks', '--permanent', "--zone=#{@resource[:zone]}")
+       if @resource[:block_icmp].is_a?(Array) && @resource[:block_icmp]
+        resource[:block_icmp].each do |myicmptypes|
+          if "#{fwlistperm}".include?"#{myicmptypes}"
+            Puppet.debug("icmp type is listed in permanent rules for firewall.")
+            next
+            #return true
+          else
+           Puppet.debug("icmp type is not listed in permanent rules for firewall.")
+           return false
+          end
+        end
+       elsif "#{fwlistperm}".include?"#{@resource[:block_icmp]}"
+         Puppet.debug("icmp type is listed in permanent rules for firewall.")
+         return true
+       else 
+         Puppet.debug("icmp type is not listed in permanent rules for firewall.")
+         return false
+       end
+
+     elsif @resource[:myzones] == true && @resource[:zone]
+       #Using arrays is currently buggy with creating new zones
+       #I will have to revisit at a later date.
+       Puppet.debug("Checking if permanent zone is created in firewall")
+       fwlistperm = firewalld('--get-zones', '--permanent')
+       #if @resource[:zone].is_a?(Array) && @resource[:zone]
+       #resource[:zone].each do |zones|
+       #   if "#{fwlistperm}".include?"#{zones}"
+       #     Puppet.debug("Zone #{zones} possibly listed in permanent firewall.")
+       #     next
+       #     #return true
+       #   else
+       #    Puppet.debug("Zone #{zones} is possibly not listed in permanent firewall.")
+       #    return false
+       #   end
+       # end
+       #elsif "#{fwlistperm}".include?"#{@resource[:zone]}"
+       #  Puppet.debug("Zone is possibly listed in permanent firewall.")
+       #  return true
+       if "#{fwlistperm}".include?"#{@resource[:zone]}"
+         Puppet.debug("Zone is possibly listed in permanent firewall.")
+         return true
+       else 
+         Puppet.debug("Zone is possibly not listed in permanent firewall.")
+         return false
+       end
 
    else @resource[:permanent] == false
      if @resource[:port]
@@ -383,7 +500,33 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
          Puppet.debug("service is not listed in permanent rules for firewall.")
          return false
        end 
-     end
+
+     elsif @resource[:myzones]
+       Puppet.fail("Trying to create a temporary zone which is not allowed")
+
+     elsif @resource[:block_icmp]
+       Puppet.debug("Checking if temporary block for icmptypes is active in firewall")
+       fwlistperm = firewalld('--list-icmp-blocks', "--zone=#{@resource[:zone]}")
+       if @resource[:block_icmp].is_a?(Array) && @resource[:block_icmp]
+	resource[:block_icmp].each do |myicmptypes|
+	  if "#{fwlistperm}".include?"#{myicmptypes}"
+	    Puppet.debug("icmp type is listed in temporary rules for firewall.")
+	    next
+	    #return true
+	  else
+	   Puppet.debug("icmp type is not listed in temporary rules for firewall.")
+	   return false
+	  end
+	end
+       elsif "#{fwlistperm}".include?"#{@resource[:block_icmp]}"
+	 Puppet.debug("icmp type is listed in temporary rules for firewall.")
+	 return true
+       else 
+	 Puppet.debug("icmp type is not listed in temporary rules for firewall.")
+	 return false
+       end
+    end
+    end
    end
   end
 
@@ -404,7 +547,6 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
   end
 
   def exists?
-    #@sourcefile = "/etc/firewalld/zones/#{@resource[:zone]}.xml"
     if @resource[:permanent] == true
       Puppet.debug("The permanent option was set to true.  Continuing with permanent firewall rule.")
       check

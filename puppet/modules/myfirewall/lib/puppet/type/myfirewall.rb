@@ -37,6 +37,8 @@ Puppet::Type.newtype(:myfirewall) do
     desc 'Name for firewall rule. (required)'
   end
 
+  #Will have to come back and revisit arrays for zones.
+  #newparam(:zone, :array_matching => :all) do
   newparam(:zone) do
     desc 'Zone to add/delete/modify firewall rules. (required)'
   end
@@ -59,6 +61,10 @@ Puppet::Type.newtype(:myfirewall) do
      desc 'Service to add to firewall'
   end
 
+  newparam(:block_icmp, :array_matching => :all) do
+     desc 'icmp messages to block in firewall'
+  end
+
   newparam(:source) do
     desc 'Ip source to allow'
   end
@@ -71,5 +77,11 @@ Puppet::Type.newtype(:myfirewall) do
     desc 'Configure rule as a permanent rule. values: (true|false)'
 
     defaultto true
+  end
+
+  newparam(:myzones, :parent => Puppet::Property::Boolean) do
+    desc 'Modify zones in firewall.  values: (true|false)'
+
+    defaultto false
   end
 end

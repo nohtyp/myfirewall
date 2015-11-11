@@ -1,6 +1,6 @@
 {
   "name": "nohtyp-myfirewall",
-  "version": "1.0.5",
+  "version": "1.0.7",
   "author": "nohtyp",
   "summary": "This is a puppet firewall module.",
   "license": "Apache-2.0",

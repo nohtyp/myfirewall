@@ -1,6 +1,6 @@
 class myfirewall::install inherits myfirewall {
 
-  package { $firewall_service:
+  package { $::myfirewall::firewall_service:
     ensure => installed,
   }
 }
