@@ -91,8 +91,8 @@ Puppet::Type.type(:myfirewall).provide(:firewalld) do
             - 110
   EOS
 
-  confine :osfamily => :redhat
-  defaultfor :operatingsystemmajrelease => 7
+  confine :osfamily => [:RedHat, :Debian]
+  defaultfor :operatingsystem => :RedHat
 
   commands :firewalld => 'firewall-cmd'
 

@@ -198,7 +198,12 @@ supports the following options:
 - `permanent` (true|false) if `false` myfirewall will only create a temporary rule
 - `myzones` (true|false) `note: This option has to be used with the permanent => true`
 
-Currently this module is working for RedHat 7 family.
+
+- `issues`
+
+1. myzones for Debian systems may not work as the firewall-cmd command does not have
+`--new-zone=` option.  However, if the firewall-cmd does have the `--new-zone` option
+then it should work as normal.
 
 ### Vagrant setup
 

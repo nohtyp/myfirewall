@@ -1,3 +1,5 @@
 class profile::firewall {
-  contain myfirewall
+  #contain stdlib
+  #contain myfirewall
+  include myfirewall
 }

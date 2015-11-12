@@ -3,13 +3,17 @@ VAGRANTFILE_API_VERSION = "2"
 #VAGRANT_BOX_URL = "http://developer.nrel.gov/downloads/vagrant-boxes/CentOS-6.4-x86_64-v20130731.box"
 #VAGRANT_BOX_URL = "http://puppet-vagrant-boxes.puppetlabs.com/centos-65-x64-virtualbox-puppet.box"
 VAGRANT_BOX_URL = "https://atlas.hashicorp.com/jkyle/boxes/centos-7.0-x86_64"
-VAGRANT_TMP_NAME = "centos7_min"
+#VAGRANT_BOX_URL = "http://f.willianfernandes.com.br/vagrant-boxes/DebianSqueeze64.box"
+#VAGRANT_BOX_URL = "https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vmwarefusion.box"
+#VAGRANT_BOX_URL = "http://sourceforge.net/projects/opensusevagrant/files/13.2/opensuse-13.2-64.box/download"
+VAGRANT_TMP_NAME = "jkyle/centos-7.0-x86_64"
 VBGUI = false
 
 nodes = [
-  { :hostname => 'test',   :ip => '192.168.2.200', :box => 'jkyle/centos-7.0-x86_64' },
-  { :hostname => 'test02', :ip => '192.168.2.201', :box => 'jkyle/centos-7.0-x86_64' },
-  { :hostname => 'test03', :ip => '192.168.2.202', :box => 'jkyle/centos-7.0-x86_64' },
+  #{ :hostname => 'test',   :ip => '192.168.2.200', :box => 'jkyle/centos-7.0-x86_64' },
+  { :hostname => 'test02',  :ip => '192.168.2.201', :box => 'jkyle/centos-7.0-x86_64' },
+  #{ :hostname => 'test02', :ip => '192.168.2.201', :box => 'suse_13' },
+  #{ :hostname => 'test03', :ip => '192.168.2.202', :box => 'jkyle/centos-7.0-x86_64' },
 ]
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
