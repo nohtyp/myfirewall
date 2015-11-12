@@ -13,8 +13,8 @@
 This module is meant to provide a simple interface to manage firewalld (currently)
 and eventually iptables.
 
-The module currently only supports RedHat 7 family, but I am working to allow this 
-module to work with other OSes.
+The module currently only supports RedHat (7) and Debian (14.04) family, but 
+I am working to allow this module to work with other OSes.
 
 ## Module Description
 
@@ -182,7 +182,7 @@ The following providers and types are created within this module:
 
 ## Limitations
 
-Currently this module is compatible with RedHat 7 family.  I am working on 
+Currently this module is compatible with RedHat (7) and Debian (14.04)family.  I am working on 
 other OSes and will update this accordingly.  The module currently
 supports the following options:
 
@@ -199,11 +199,12 @@ supports the following options:
 - `myzones` (true|false) `note: This option has to be used with the permanent => true`
 
 
-- `issues`
+### Issues
 
 1. myzones for Debian systems may not work as the firewall-cmd command does not have
 `--new-zone=` option.  However, if the firewall-cmd does have the `--new-zone` option
 then it should work as normal.
+
 
 ### Vagrant setup
 
